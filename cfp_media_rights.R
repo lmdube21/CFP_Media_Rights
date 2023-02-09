@@ -3,9 +3,11 @@
 #import libraries
 library(readr)
 library(mosaic)
-library(dplyr)
 library(ggthemes)
 library(treemapify)
+library(dplyr)
+library(gt)
+library(gtExtras)
 
 #import general viewership data for CFP
 path = "/Users/lorenzo_dube/Documents/GitHub/CFP_Media_Rights/CFB_Bowl_Viewership.csv"
@@ -66,8 +68,8 @@ ggplot(cfp_no_nc, aes(x = ROUND_NAME, y = Viewers)) +
         axis.title.y = element_text(colour = '#E52534', margin = margin(r = 20), face = "bold"))
 
 viewer_fit = lm(Viewers~ROUND, data = cfp_no_nc)
-summarize(viewer_fit)
-confint(viewerfit)
+summary(viewer_fit)
+confint(viewer_fit)
 ##########
 #analysis to compare playoff semis to national championship to see round to round difference
 
@@ -81,7 +83,7 @@ ggplot(cfp_semi_nc, aes(x = ROUND_NAME, y = Viewers)) +
         axis.title.y = element_text(colour = '#E52534', margin = margin(r = 20), face = "bold"))
 
 semi_nc_fit = lm(Viewers~ROUND, data = cfp_semi_nc)
-summarize(semi_nc_fit)
+summary(semi_nc_fit)
 confint(semi_nc_fit)
 #######################
 #Analysis of Viewership Changes over time for CPF vs non-playoff NY6 Bowls
@@ -96,6 +98,10 @@ ggplot(avg_viewers, aes(x = SEASON, y = avg_value, colour = playoff)) +
 cfp_viewer_year_model = lm(Viewers~SEASON, cfp_semi_nc)
 summary(cfp_viewer_year_model)
 confint(cfp_viewer_year_model)
+
+ny6_viewer_year_model = lm(Viewers~SEASON, nysix)
+summary(ny6_viewer_year_model)
+confint(ny6_viewer_year_model)
 #######################
 #Treeplot for types of adds based on minutes of add time
 ggplot(na.omit(ad_type_analysis), aes(area = `Ad Time Per Category`, fill = Category, label = paste(`Ad Time Per Category`))) +
@@ -109,21 +115,21 @@ ggplot(na.omit(ad_type_analysis), aes(area = `Ad Time Per Category`, fill = Cate
                     size = 15) 
 
 
+###########
+#Calculations for best/worst case future viewer analysis
+mean(semis$Viewers)
+confint(semis$Viewers)
+
+####################
+#AVG Viewers/Nielsen Table Setup
 
 
+path3 = "/Users/lorenzo_dube/Documents/GitHub/CFP_Media_Rights/Avg_CFP_Broadcast_Viewers_Nielsen.csv"
+view_niels_table = read_csv(path3)
+view_niels_table %>%  
+  gt() %>% 
+  gt_theme_538() %>% 
+  tab_header(title = "Average Viewership and Nielsen Rating by Season")
 
 
-
-
-
-
-
-
-nc_viewer_year_model = lm(Viewers~SEASON, champ)
-summary(nc_viewer_year_model)
-confint(nc_viewer_year_model)
-
-semi_viewer_year_model = lm(Viewers~SEASON, semis)
-summary(semi_viewer_year_model)
-confint(semi_viewer_year_model)
 
